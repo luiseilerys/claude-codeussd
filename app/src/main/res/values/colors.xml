@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta inspirada en Útiles (verde teal cálido) + QVacal (crema/dorado) -->
+    <color name="primary">#1E5C56</color>
+    <color name="primary_dark">#123F3A</color>
+    <color name="accent">#C89B3C</color>
+    <color name="accent_light">#E8C87E</color>
+    <color name="bg">#F1E6D3</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_main">#1C2B29</color>
+    <color name="text_sub">#5E6E6B</color>
+    <color name="chip_bg">#E4DCC9</color>
+    <color name="danger">#B3402A</color>
+    <color name="star_on">#C89B3C</color>
+    <color name="star_off">#9AA6A3</color>
+
+    <!-- dark -->
+    <color name="d_primary">#2E7D74</color>
+    <color name="d_accent">#E8C87E</color>
+    <color name="d_bg">#121A19</color>
+    <color name="d_surface">#1C2726</color>
+    <color name="d_text_main">#EAF0EE</color>
+    <color name="d_text_sub">#9FB0AC</color>
+    <color name="d_chip_bg">#26332F</color>
+</resources>

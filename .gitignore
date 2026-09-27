@@ -1,0 +1,7 @@
+# Android SDK and Build Tools
+build-tools/
+
+# Gradle Build System
+.gradle/
+build/
+local.properties

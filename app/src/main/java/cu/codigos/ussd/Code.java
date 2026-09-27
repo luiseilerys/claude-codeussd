@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Code {
     public String code, title, desc, cat, op;
+    public String url = null; // si viene, la tarjeta abre el navegador en vez de marcar
     public boolean danger = false;
     public List<String> params = new ArrayList<>();
     public List<String> tags = new ArrayList<>();
@@ -22,6 +23,7 @@ public class Code {
             c.desc = o.optString("d", "");
             c.cat = o.getString("cat");
             c.op = o.optString("op", "todos");
+            c.url = o.optString("url", null);
             c.danger = o.optBoolean("danger", false);
             JSONArray p = o.optJSONArray("params");
             if (p != null) for (int j = 0; j < p.length(); j++) c.params.add(p.getString(j));

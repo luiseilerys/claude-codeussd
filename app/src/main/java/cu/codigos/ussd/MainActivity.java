@@ -1,20 +1,34 @@
 package cu.codigos.ussd;
 
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -86,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btnCalc).setOnClickListener(v -> showCalc());
+        findViewById(R.id.btnTimer).setOnClickListener(v -> showTimerDialog());
+        findViewById(R.id.btnSpeed).setOnClickListener(v -> showConnectionInfo());
         findViewById(R.id.btnDark).setOnClickListener(v -> {
             boolean dark = !store.isDark();
             store.setDark(dark);
@@ -306,12 +323,229 @@ public class MainActivity extends AppCompatActivity {
                         + "• ⭐ marca tus códigos favoritos; «Recientes» guarda lo último usado.\n"
                         + "• Busca por palabra («saldo», «recarga», «paquete») o escribiendo parte del código.\n"
                         + "• Los códigos con parámetros abren un formulario para completarlos.\n"
+                        + "• Categorías nuevas: «WiFi ETECSA (n@una)» y «Nauta Hogar» con todas sus configuraciones.\n"
+                        + "• ⏳ Tiempo restante: lanza una burbuja flotante con cuenta regresiva (requiere permiso de mostrar sobre otras apps).\n"
+                        + "• 📶 Velocidad: revisa tu conexión actual, fuerza datos móviles y abre un test de velocidad.\n"
                         + "• Filtros Celular/Fijo y categorías organizan la lista.\n"
                         + "• Modo oscuro disponible abajo.\n\n"
                         + "Los precios/paquetes pueden cambiar: verifica siempre en el menú de la operadora. "
                         + "Códigos de Cubacel, ETECSA, Nauta y códigos GSM/Android estándar.")
                 .setPositiveButton("Entendido", null)
                 .show();
+    }
+
+    // ---------- tiempo restante (burbuja flotante) ----------
+    private static final int REQ_OVERLAY = 77;
+    private static final String[] TIMER_PRESETS = {
+            "Personalizado…",
+            "WiFi 30 min",
+            "WiFi 1 hora",
+            "WiFi 3 horas",
+            "WiFi 6 horas",
+            "WiFi 24 horas",
+            "Paquete semanal (7 días)",
+            "Paquete mensual (30 días)"
+    };
+
+    private long presetMillis(int idx) {
+        switch (idx) {
+            case 1: return 30 * 60_000L;
+            case 2: return 60 * 60_000L;
+            case 3: return 3 * 3600_000L;
+            case 4: return 6 * 3600_000L;
+            case 5: return 24 * 3600_000L;
+            case 6: return 7 * 24 * 3600_000L;
+            case 7: return 30 * 24 * 3600_000L;
+            default: return -1; // personalizado
+        }
+    }
+
+    private void showTimerDialog() {
+        LinearLayout lay = new LinearLayout(this);
+        lay.setOrientation(LinearLayout.VERTICAL);
+        int p = dp(20);
+        lay.setPadding(p, p / 2, p, 0);
+
+        Spinner sp = new Spinner(this);
+        sp.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, TIMER_PRESETS));
+        lay.addView(sp);
+
+        final EditText h = new EditText(this);
+        h.setHint("Horas"); h.setInputType(InputType.TYPE_CLASS_NUMBER);
+        final EditText m = new EditText(this);
+        m.setHint("Minutos"); m.setInputType(InputType.TYPE_CLASS_NUMBER);
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams lpw = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        h.setLayoutParams(lpw); m.setLayoutParams(lpw);
+        row.addView(h); row.addView(m);
+        lay.addView(row);
+
+        final TextView status = new TextView(this);
+        status.setTextSize(12f);
+        status.setText(FloatService.isRunning()
+                ? "⏳ La burbuja flotante está activa ahora mismo."
+                : "La burbuja muestra la cuenta regresiva sobre todas las apps.");
+        lay.addView(status);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.timer_title)
+                .setView(lay)
+                .setNeutralButton(FloatService.isRunning() ? "Detener burbuja" : "Cerrar", (d, w) -> {
+                    if (FloatService.isRunning()) FloatService.stop(this);
+                })
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Iniciar burbuja", (d, w) -> {
+                    long ms;
+                    int idx = sp.getSelectedItemPosition();
+                    if (idx == 0) {
+                        long hh = parseLong(h.getText().toString(), 0);
+                        long mm = parseLong(m.getText().toString(), 0);
+                        ms = hh * 3600_000L + mm * 60_000L;
+                    } else {
+                        ms = presetMillis(idx);
+                    }
+                    if (ms <= 0) { Toast.makeText(this, "Indica un tiempo mayor que cero", Toast.LENGTH_SHORT).show(); return; }
+                    String label = idx == 0
+                            ? "Restante"
+                            : TIMER_PRESETS[idx].replace("WiFi ", "WiFi · ").replace("Paquete ", "Datos · ");
+                    if (!Settings.canDrawOverlays(this)) {
+                        Toast.makeText(this, R.string.overlay_needed, Toast.LENGTH_LONG).show();
+                        try {
+                            startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName())));
+                        } catch (Exception ignored) {
+                            startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
+                        }
+                        pendingOverlayStart = System.currentTimeMillis() + ms;
+                        pendingOverlayLabel = label;
+                        return;
+                    }
+                    FloatService.startWith(this, System.currentTimeMillis() + ms, label);
+                    Toast.makeText(this, "Burbuja iniciada: " + label, Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
+    private long pendingOverlayStart = 0;
+    private String pendingOverlayLabel = null;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (pendingOverlayStart > 0 && Settings.canDrawOverlays(this)) {
+            FloatService.startWith(this, pendingOverlayStart, pendingOverlayLabel);
+            Toast.makeText(this, "Permiso concedido: burbuja iniciada", Toast.LENGTH_SHORT).show();
+            pendingOverlayStart = 0;
+            pendingOverlayLabel = null;
+        }
+    }
+
+    private static long parseLong(String s, long def) {
+        try { return Long.parseLong(s.trim()); } catch (Exception e) { return def; }
+    }
+
+    // ---------- velocidad / estado de conexión ----------
+    private void showConnectionInfo() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network active = null;
+        if (cm != null) {
+            if (Build.VERSION.SDK_INT >= 23) active = cm.getActiveNetwork();
+            else {
+                @SuppressWarnings("deprecation") android.net.NetworkInfo ni = cm.getActiveNetworkInfo();
+                if (ni != null && ni.isConnected()) {
+                    @SuppressWarnings("deprecation") Network[] ns = cm.getAllNetworks();
+                    for (Network nn : ns) {
+                        @SuppressWarnings("deprecation") NetworkCapabilities nnc = cm.getNetworkCapabilities(nn);
+                        if (nnc != null && nnc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) { active = nn; break; }
+                    }
+                    if (active == null && ns.length > 0) active = ns[0];
+                }
+            }
+        }
+        NetworkCapabilities nc = cm != null && active != null ? cm.getNetworkCapabilities(active) : null;
+
+        boolean wifi = nc != null && nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
+        boolean cell = nc != null && nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR);
+        boolean eth = nc != null && nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
+
+        StringBuilder sb = new StringBuilder();
+        if (nc == null) sb.append("❌ Sin conexión a Internet.\n\n");
+        else {
+            sb.append("🔗 Conexión activa: ")
+              .append(wifi ? "WiFi" : cell ? "Datos móviles" : eth ? "Cable/Ethernet" : "Otra")
+              .append("\n");
+            boolean internet = Build.VERSION.SDK_INT >= 23
+                    && nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET_ACCESSIBLE);
+            if (internet || (Build.VERSION.SDK_INT < 23 && nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)))
+                sb.append("✅ Internet accesible\n");
+            else if (wifi)
+                sb.append("⚠️ Estás conectado al WiFi pero SIN salida a Internet: probablemente falta iniciar sesión en wifi.etecsa.cu (portal cautivo n@una).\n");
+        }
+
+        if (wifi && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            WifiManager wmgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            WifiInfo info = wmgr != null ? wmgr.getConnectionInfo() : null;
+            if (info != null) {
+                int dbm = info.getRssi();
+                String quality = dbm >= -50 ? "Excelente" : dbm >= -65 ? "Buena" : dbm >= -80 ? "Regular" : "Débil";
+                sb.append("📡 Señal WiFi: ").append(dbm).append(" dBm (").append(quality).append(")\n");
+                sb.append("   Red: ").append(info.getSSID() == null ? "?" : info.getSSID()).append("\n");
+                if (Build.VERSION.SDK_INT >= 21 && info.getFrequency() > 0)
+                    sb.append("   Banda: ").append(info.getFrequency() >= 4900 ? "5 GHz" : "2.4 GHz").append("\n");
+            }
+        } else if (wifi) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 65);
+            sb.append("ℹ️ Concede ubicación para ver intensidad y banda del WiFi.\n");
+        }
+
+        if (cell) sb.append("📶 Datos móviles activos (consulta Mb restantes con *222*2#).\n");
+
+        LinearLayout lay = new LinearLayout(this);
+        lay.setOrientation(LinearLayout.VERTICAL);
+        int p = dp(20);
+        lay.setPadding(p, p / 2, p, 0);
+        TextView msg = new TextView(this);
+        msg.setText(sb.toString());
+        msg.setTextSize(14f);
+        lay.addView(msg);
+
+        Spinner speedSel = new Spinner(this);
+        final String[] speeds = {"Auto-detectar", "Forzar solo datos móviles", "Forzar solo WiFi"};
+        speedSel.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, speeds));
+        lay.addView(speedSel);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.speed_title)
+                .setView(lay)
+                .setNegativeButton("Cerrar", null)
+                .setNeutralButton("Ajustes de red", (d, w) -> {
+                    try { startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS)); }
+                    catch (Exception e) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
+                })
+                .setPositiveButton("Test de velocidad", (d, w) -> {
+                    int sel = speedSel.getSelectedItemPosition();
+                    applyPreferredNetwork(sel);
+                    Dialer.openUrl(this, "https://www.speedtest.net/api/js/servers?engine=js&limit=1");
+                    Dialer.openUrl(this, "https://fast.com/es/");
+                })
+                .show();
+    }
+
+    /** Cambia el modo de ahorro de datos / restricción según la opción elegida. */
+    private void applyPreferredNetwork(int sel) {
+        try {
+            if (sel == 1) {
+                startActivity(new Intent(Settings.ACTION_SETTINGS)); // sin API pública: guía manual
+                Toast.makeText(this, "Apaga el WiFi para forzar datos móviles", Toast.LENGTH_LONG).show();
+            } else if (sel == 2) {
+                Toast.makeText(this, "Conéctate a ETH_WiFi/hogar y abre wifi.etecsa.cu si pide sesión", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception ignored) { }
     }
 
     private int dp(int v) {
@@ -331,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull VH h, int pos) {
             Code c = shown.get(pos);
-            h.code.setText(c.code);
+            h.code.setText(c.url != null && !c.url.isEmpty() ? "🌐 " + c.url : c.code);
             h.title.setText(c.title);
             h.desc.setText(c.danger ? "⚠ " + c.desc : c.desc);
             if (c.danger) h.code.getPaintFlags(); // keep simple

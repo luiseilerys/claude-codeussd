@@ -10,6 +10,7 @@
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/text_main</item>
         <item name="android:statusBarColor" tools:targetApi="21">@color/primary_dark</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
     <style name="ChipText" parent="TextAppearance.Material3.LabelMedium">

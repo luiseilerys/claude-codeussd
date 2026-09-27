@@ -161,6 +161,8 @@
         android:padding="6dp">
 
         <TextView android:id="@+id/btnCalc" style="@style/BottomAction" android:text="🧮\nCalculadora" />
+        <TextView android:id="@+id/btnTimer" style="@style/BottomAction" android:text="⏳\nTiempo restante" />
+        <TextView android:id="@+id/btnSpeed" style="@style/BottomAction" android:text="📶\nVelocidad" />
         <TextView android:id="@+id/btnDark" style="@style/BottomAction" android:text="🌙\nModo oscuro" />
         <TextView android:id="@+id/btnAbout" style="@style/BottomAction" android:text="ℹ️\nAyuda" />
     </LinearLayout>

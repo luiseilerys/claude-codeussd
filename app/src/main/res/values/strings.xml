@@ -20,6 +20,9 @@
     <string name="history_cleared">Historial borrado</string>
     <string name="share_via">Compartir código…</string>
     <string name="calc_title">Calculadora de consumo</string>
+    <string name="timer_title">Tiempo restante (burbuja flotante)</string>
+    <string name="speed_title">Velocidad y estado de conexión</string>
+    <string name="overlay_needed">Para la burbuja flotante activa «Mostrar sobre otras apps» y vuelve a iniciar el contador.</string>
     <string name="filter_all">Todos</string>
     <string name="filter_celular">Celular</string>
     <string name="filter_fijo">Fijo</string>

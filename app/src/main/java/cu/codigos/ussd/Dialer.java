@@ -46,12 +46,26 @@ public class Dialer {
 
     /** Muestra diálogo para rellenar parámetros del código (si los tiene) y luego marca. */
     public static void handleCode(final Context ctx, final Code c, final Runnable afterDial) {
+        if (c.url != null && !c.url.isEmpty()) {
+            openUrl(ctx, c.url);
+            if (afterDial != null) afterDial.run();
+            return;
+        }
         if (!c.params.isEmpty()) {
             showParamsDialog(ctx, c, afterDial);
         } else {
             dial(ctx, c.code);
             if (afterDial != null) afterDial.run();
         }
+    }
+
+    /** Texto del botón principal según el tipo de entrada (USSD, teléfono o web). */
+    public static String actionLabel(Code c) {
+        if (c.url != null && !c.url.isEmpty()) return "Abrir";
+        String clean = c.code.replaceAll("[^0-9*#+]", "");
+        if (clean.isEmpty()) return "Copiar";
+        if (!clean.startsWith("*") && !clean.startsWith("#")) return "Llamar";
+        return "Marcar";
     }
 
     private static void showParamsDialog(final Context ctx, final Code c, final Runnable afterDial) {
@@ -93,6 +107,17 @@ public class Dialer {
                     if (afterDial != null) afterDial.run();
                 })
                 .show();
+    }
+
+    /** Abre una URL (portales ETECSA, panel del router…) en el navegador. */
+    public static void openUrl(Context ctx, String url) {
+        try {
+            Intent it = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ctx.startActivity(it);
+        } catch (Exception e) {
+            Toast.makeText(ctx, "No hay navegador para abrir: " + url, Toast.LENGTH_LONG).show();
+        }
     }
 
     /** Inserta los parámetros antes del # final del código plantilla. */

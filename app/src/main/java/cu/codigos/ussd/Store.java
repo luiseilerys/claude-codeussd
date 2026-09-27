@@ -83,4 +83,13 @@ public class Store {
 
     public boolean isDark() { return sp.getBoolean(K_DARK, false); }
     public void setDark(boolean v) { sp.edit().putBoolean(K_DARK, v).apply(); }
+
+    // ---------- temporizador flotante (tiempo restante) ----------
+    private static final String K_FLOAT_END = "float_end";
+    private static final String K_FLOAT_LABEL = "float_label";
+
+    public long getFloatEnd() { return sp.getLong(K_FLOAT_END, 0L); }
+    public void setFloatEnd(long v) { sp.edit().putLong(K_FLOAT_END, v).apply(); }
+    public String getFloatLabel() { return sp.getString(K_FLOAT_LABEL, ""); }
+    public void setFloatLabel(String v) { sp.edit().putString(K_FLOAT_LABEL, v == null ? "" : v).apply(); }
 }

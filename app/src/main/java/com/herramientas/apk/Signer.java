@@ -114,7 +114,9 @@ public final class Signer {
         X509Holder(java.security.cert.X509Certificate c) {
             this.cert = c;
             byte[] d = null;
-            try (InputStream in = c.getInputStream()) { d = Utils.readAll(in); }
+            // FIX: X509Certificate no tiene getInputStream(); la codificacion DER
+            // publica del certificado se obtiene con getEncoded().
+            try { d = c.getEncoded(); }
             catch (Exception ignored) {}
             this.der = d;
         }

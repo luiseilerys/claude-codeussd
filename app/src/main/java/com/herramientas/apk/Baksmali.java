@@ -106,7 +106,9 @@ public final class Baksmali {
         for (int pc = codeOff + 16; pc + 1 < end; ) {
             int unit = bb.getShort(pc) & 0xFFFF;
             int op = unit & 0xFF;
-            int line = String.format("    %04x: ", (pc - codeOff - 16) / 2);
+            // FIX: String.format devuelve String; antes se asignaba a int y el
+            // compilador fallaba con "incompatible types: String cannot be converted to int".
+            String line = String.format("    %04x: ", (pc - codeOff - 16) / 2);
             int width;
             switch (op) {
                 case 0x00: sb.append(line).append("nop\n");  width = 2; break;

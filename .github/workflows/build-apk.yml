@@ -88,7 +88,7 @@ jobs:
         run: |
           BUILD_TYPE="${{ github.event.inputs.build_type || 'release' }}"
           ./gradlew --no-daemon assemble"$BUILD_TYPE" \
-            -Pandroid.useAndroidX=false --stacktrace
+            -Pandroid.useAndroidX=true --stacktrace
           echo "APK_PATH=$(find app/build/outputs/apk -name '*.apk' | head -1)" >> "$GITHUB_ENV"
           echo "BUILD_USED=$BUILD_TYPE" >> "$GITHUB_ENV"
 

@@ -1,1 +1,10 @@
-(empty)
+# Gradle and Android build artifacts
+.gradle/
+build/
+app/build/
+local.properties
+
+# IDE files
+.idea/
+*.iml
+.DS_Store

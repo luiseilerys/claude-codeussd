@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Fix "Android resource linking failed":
+
+  styles/themes en values/themes.xml y values-night/themes.xml referencian
+  atributos Material (colorPrimary, backgroundTint, cornerRadius, strokeColor,
+  selectableItemBackground...). Esos attrs solo existen si el módulo depende
+  de com.google.android.material / appcompat; sin esa dependencia AAPT2 no
+  puede resolverlos y el build release falla con:
+      error: attribute attr/selectableItemBackground not found
+      error: attribute attr/backgroundTint not found ...
+
+  Aquí se declaran como <public> attrs propios para que estén siempre
+  definidos en el R del paquete (fallback). Cuando la app dependa de
+  Material Components, los attrs reales de la librería tienen prioridad en
+  la resolución de estilos y estos quedan como compatibilidad.
+-->
+<resources>
+
+    <!-- Colores de tema (nombres estilo Material) -->
+    <attr name="colorPrimary" format="color" />
+    <attr name="colorOnPrimary" format="color" />
+    <attr name="colorPrimaryContainer" format="color" />
+    <attr name="colorSecondary" format="color" />
+    <attr name="colorOnSecondary" format="color" />
+    <attr name="colorSurface" format="color" />
+    <attr name="colorOnSurface" format="color" />
+    <attr name="colorSurfaceVariant" format="color" />
+    <attr name="colorError" format="color" />
+    <attr name="colorOnError" format="color" />
+
+    <!-- Atributos usados por botones / chips Material en styles -->
+    <attr name="backgroundTint" format="color|reference" />
+    <attr name="cornerRadius" format="dimension" />
+    <attr name="strokeColor" format="color|reference" />
+    <attr name="strokeWidth" format="dimension" />
+
+    <!-- Ripple/selectable usado por ?attr/selectableItemBackground -->
+    <attr name="selectableItemBackground" format="reference" />
+    <attr name="selectableItemBackgroundBorderless" format="reference" />
+
+</resources>

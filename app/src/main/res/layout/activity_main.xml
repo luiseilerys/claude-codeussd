@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground">
+
+    <!-- Cabecera con degradado -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_header"
+        android:paddingStart="18dp" android:paddingEnd="18dp"
+        android:paddingTop="26dp" android:paddingBottom="18dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Códigos Cuba"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="USSD · Cubacel · ETECSA · sin conexión"
+            android:textColor="#D8EFE9"
+            android:textSize="13sp" />
+
+        <!-- Buscador -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp" android:paddingEnd="6dp">
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="@string/search_hint"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:maxLines="1"
+                android:textColor="@color/text_main"
+                android:textColorHint="@color/text_sub"
+                android:textSize="15sp" />
+
+            <ImageButton
+                android:id="@+id/btnClear"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_star_outline"
+                android:scaleType="insideCenter"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:contentDescription="limpiar" />
+        </LinearLayout>
+
+        <!-- Pestañas Todos / Favoritos / Recientes + filtros operador -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/tabBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/tabAll" style="@style/TabPill" android:text="@string/tab_all" />
+                <TextView android:id="@+id/tabFav" style="@style/TabPill" android:text="@string/tab_fav" />
+                <TextView android:id="@+id/tabRecent" style="@style/TabPill" android:text="@string/tab_recent" />
+                <View android:layout_width="14dp" android:layout_height="1dp" />
+                <TextView android:id="@+id/fAll" style="@style/TabPillGhost" android:text="@string/filter_all" />
+                <TextView android:id="@+id/fCel" style="@style/TabPillGhost" android:text="@string/filter_celular" />
+                <TextView android:id="@+id/fFij" style="@style/TabPillGhost" android:text="@string/filter_fijo" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <!-- Chips de categorías -->
+    <HorizontalScrollView
+        android:id="@+id/catScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingStart="14dp" android:paddingEnd="14dp"
+        android:paddingTop="12dp" android:paddingBottom="4dp">
+
+        <LinearLayout
+            android:id="@+id/catBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <!-- Lista -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="10dp" android:paddingEnd="10dp"
+            android:paddingBottom="16dp" />
+
+        <LinearLayout
+            android:id="@+id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp" android:layout_height="64dp"
+                android:src="@drawable/ic_phone"
+                android:alpha="0.4"
+                android:contentDescription="vacio" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/no_results"
+                android:textStyle="bold"
+                android:textColor="@color/text_main"
+                android:textSize="17sp"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/no_results_hint"
+                android:textColor="@color/text_sub"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Barra inferior de mecánicas extra -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?attr/colorSurface"
+        android:elevation="12dp"
+        android:padding="6dp">
+
+        <TextView android:id="@+id/btnCalc" style="@style/BottomAction" android:text="🧮\nCalculadora" />
+        <TextView android:id="@+id/btnTimer" style="@style/BottomAction" android:text="⏳\nTiempo restante" />
+        <TextView android:id="@+id/btnSpeed" style="@style/BottomAction" android:text="📶\nVelocidad" />
+        <TextView android:id="@+id/btnDark" style="@style/BottomAction" android:text="🌙\nModo oscuro" />
+        <TextView android:id="@+id/btnAbout" style="@style/BottomAction" android:text="ℹ️\nAyuda" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.CodigosCuba" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/d_primary</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">@color/d_accent</item>
+        <item name="colorOnSecondary">#121A19</item>
+        <item name="android:colorBackground">@color/d_bg</item>
+        <item name="colorSurface">@color/d_surface</item>
+        <item name="colorOnSurface">@color/d_text_main</item>
+        <item name="android:statusBarColor">@color/d_bg</item>
+    </style>
+</resources>

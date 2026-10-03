@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cardRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card"
+    android:layout_marginStart="6dp" android:layout_marginEnd="6dp"
+    android:layout_marginTop="6dp" android:layout_marginBottom="4dp"
+    android:padding="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="*222#"
+            android:textColor="@color/primary"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:fontFamily="monospace" />
+
+        <ImageView
+            android:id="@+id/btnFav"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_star_outline"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="favorito" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="Título"
+        android:textColor="@color/text_main"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="Descripción"
+        android:textColor="@color/text_sub"
+        android:textSize="13sp"
+        android:maxLines="3"
+        android:ellipsize="end" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvCat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip"
+            android:paddingStart="10dp" android:paddingEnd="10dp"
+            android:paddingTop="4dp" android:paddingBottom="4dp"
+            android:text="Categoría"
+            android:textColor="@color/text_sub"
+            android:textSize="11sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/btnShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Compartir"
+            android:textColor="@color/text_sub"
+            android:textSize="12sp"
+            android:background="?attr/selectableItemBackground" />
+
+        <TextView
+            android:id="@+id/btnCopy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_marginStart="4dp"
+            android:text="Copiar"
+            android:textColor="@color/text_sub"
+            android:textSize="12sp"
+            android:background="?attr/selectableItemBackground" />
+
+        <TextView
+            android:id="@+id/btnDial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_header"
+            android:paddingStart="16dp" android:paddingEnd="16dp"
+            android:paddingTop="8dp" android:paddingBottom="8dp"
+            android:text="Marcar"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/primary"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+</LinearLayout>

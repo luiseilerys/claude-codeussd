@@ -36,7 +36,7 @@ public final class CertBuilder {
         return o.toByteArray();
     }
 
-    private static byte[] seq(byte... parts[]) {
+    private static byte[] seq(byte[]... parts) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         for (byte[] p : parts) o.write(p, 0, p.length);
         return tlv(0x30, o.toByteArray());

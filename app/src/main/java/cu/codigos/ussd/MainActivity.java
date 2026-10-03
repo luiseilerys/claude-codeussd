@@ -41,6 +41,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -124,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
             }
             String json = new String(buf, 0, n, StandardCharsets.UTF_8);
             JSONObject root = new JSONObject(json);
-            var cats = root.getJSONArray("categories");
+            // Fix: no usar 'var' (Java 10+) — el proyecto compila con
+            // sourceCompatibility JavaVersion.VERSION_1_8.
+            JSONArray cats = root.getJSONArray("categories");
             for (int i = 0; i < cats.length(); i++) {
                 JSONObject o = cats.getJSONObject(i);
                 catNames.put(o.getString("id"), o.getString("name"));

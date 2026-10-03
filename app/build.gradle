@@ -3,11 +3,37 @@ plugins {
 }
 
 android {
-    namespace 'com.herramientas.apk'
+    // Fix "package R does not exist": los fuentes de la app (MainActivity,
+    // Dialer, FloatService...) estan en el paquete cu.codigos.ussd y usan R
+    // sin import, es decir esperan cu.codigos.ussd.R. AAPT2 genera la clase R
+    // SIEMPRE en el paquete indicado por "namespace"; con namespace
+    // 'com.herramientas.apk' el R generado no coincidia con el que el codigo
+    // resuelve -> decenas de errores "package R does not exist". Se unifica
+    // el namespace con el paquete real del codigo. El applicationId puede
+    // seguir siendo otro (identificador de instalacion), pero se mantiene
+    // igual para evitar ambiguedad.
+    namespace 'cu.codigos.ussd'
     compileSdk 34
 
+    // AGP 8.x: se declaran explicitamente las build features usadas.
+    // "resValues true" fuerza el procesamiento de valores de recursos;
+    // ojo: la generacion de R.java NO es una opcion de buildFeatures en
+    // AGP 8.x (nombres como rClassGeneration rompen el build) — R la
+    // genera AAPT2 automaticamente mientras el namespace sea valido y los
+    // recursos compilen.
+    buildFeatures {
+        aidl false
+        buildConfig true
+        dataBinding false
+        mlModelBinding false
+        renderScript false
+        resValues true
+        shaders false
+        viewBinding false
+    }
+
     defaultConfig {
-        applicationId "com.herramientas.apk"
+        applicationId "cu.codigos.ussd"
         minSdk 21          // Android 5.0 Lollipop
         targetSdk 34
         versionCode 1

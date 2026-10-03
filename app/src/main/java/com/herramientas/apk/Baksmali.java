@@ -296,11 +296,14 @@ public final class Baksmali {
     }
 
     private static String accessFlags(int f) {
+        // Fix "incompatible types: String cannot be converted to int": the flag
+        // table pairs int masks with String names, so it must be Object[][]
+        // (an int[][] cannot hold the string values).
         StringBuilder s = new StringBuilder();
-        int[][] table = {{0x1,"public"},{0x2,"private"},{0x4,"protected"},{0x8,"static"},
+        Object[][] table = {{0x1,"public"},{0x2,"private"},{0x4,"protected"},{0x8,"static"},
                 {0x10,"final"},{0x20,"synchronized"},{0x40,"volatile/bridge"},{0x80,"transient/varargs"},
                 {0x100,"native"},{0x400,"abstract"},{0x1000,"synthetic"},{0x2000,"annotation"},{0x4000,"enum"}};
-        for (int[] e : table) if ((f & e[0]) != 0) s.append(e[1]).append(' ');
+        for (Object[] e : table) if ((f & ((Integer) e[0])) != 0) s.append((String) e[1]).append(' ');
         return s.toString();
     }
 

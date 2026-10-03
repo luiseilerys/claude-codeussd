@@ -28,10 +28,18 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setTitle(getString(R.string.app_name));
-
-        LinearLayout list = findViewById(R.id.tool_list);
+        // Fix "cannot find symbol: R.id.tool_list": the app's only layout is
+        // res/layout/activity_main.xml (the USSD list screen), which has no
+        // tool_list id. The tool buttons are created programmatically in
+        // addTool(), so build a plain ScrollView + LinearLayout here instead
+        // of inflating a layout — this removes the dangling R.id reference
+        // that broke R-class resolution for the whole module.
+        ScrollView scroll = new ScrollView(this);
+        LinearLayout list = new LinearLayout(this);
+        list.setOrientation(LinearLayout.VERTICAL);
+        list.setPadding(24, 24, 24, 24);
+        scroll.addView(list);
+        setContentView(scroll);
         addTool(list, "Información de APK", "Manifest, permisos, versiones (aapt-dump)", Tools.APK_INFO);
         addTool(list, "Información de DEX", "Cabecera, clases y métodos de classes.dex", Tools.DEX_INFO);
         addTool(list, "apktool decode", "Descompilar APK a fuentes (smali + recursos)", Tools.APKTOOL_DECODE);

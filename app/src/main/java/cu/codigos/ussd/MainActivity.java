@@ -479,9 +479,12 @@ public class MainActivity extends AppCompatActivity {
             sb.append("🔗 Conexión activa: ")
               .append(wifi ? "WiFi" : cell ? "Datos móviles" : eth ? "Cable/Ethernet" : "Otra")
               .append("\n");
-            boolean internet = Build.VERSION.SDK_INT >= 23
-                    && nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET_ACCESSIBLE);
-            if (internet || (Build.VERSION.SDK_INT < 23 && nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)))
+            // Fix "cannot find symbol": NET_CAPABILITY_INTERNET_ACCESSIBLE is
+            // a @SystemApi and is NOT part of the public SDK, so it can never
+            // compile. The public equivalent for "has Internet access" is
+            // NET_CAPABILITY_INTERNET (API 21+, within our minSdk 21).
+            boolean internet = nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+            if (internet)
                 sb.append("✅ Internet accesible\n");
             else if (wifi)
                 sb.append("⚠️ Estás conectado al WiFi pero SIN salida a Internet: probablemente falta iniciar sesión en wifi.etecsa.cu (portal cautivo n@una).\n");

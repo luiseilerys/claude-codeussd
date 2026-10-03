@@ -1,0 +1,40 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.herramientas.apk'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.herramientas.apk"
+        minSdk 21          // Android 5.0 Lollipop
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ''
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug   // firma con keystore debug; cambia en producción
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // Los JARs de apktool/smali/baksmali se empaquetan como libs para uso in-app
+    packagingOptions {
+        jniLibs { useLegacyPackaging = true }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}

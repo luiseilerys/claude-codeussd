@@ -1,1 +1,15 @@
-(empty)
+# Android/Gradle build artifacts
+.gradle/
+build/
+app/build/
+
+# IDE and editor files
+.idea/
+*.iml
+.vscode/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# OS generated files
+.DS_Store

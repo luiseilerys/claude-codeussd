@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,14 @@ public class Store {
         favs.addAll(split(sp.getString(K_FAV, "")));
         try {
             JSONObject o = new JSONObject(TextUtils.isEmpty(sp.getString(K_USES, "{}")) ? "{}" : sp.getString(K_USES, "{}"));
-            for (String k : o.keySet()) uses.put(k, o.getInt(k));
+            // Fix "cannot find symbol: method keySet()": org.json.JSONObject
+            // has no keySet(); iteration must go through keys(), which returns
+            // an Iterator<String>.
+            Iterator<String> keys = o.keys();
+            while (keys.hasNext()) {
+                String k = keys.next();
+                uses.put(k, o.getInt(k));
+            }
             JSONArray a = new JSONArray(TextUtils.isEmpty(sp.getString(K_ORDER, "[]")) ? "[]" : sp.getString(K_ORDER, "[]"));
             for (int i = 0; i < a.length(); i++) recentOrder.add(a.getString(i));
         } catch (Exception ignored) {

@@ -73,6 +73,13 @@ public final class DexMerger {
 
     private static final class ClassOut {
         int classType, access, superType, ifaceOff, sourceStr, annOff, srcNameStr, classDataOff;
+        // Fields referenced by the helper methods at lines ~553-557
+        // (countCodes/firstCode/anyDebug/countDebug/firstDebug); without them
+        // compilation failed with "cannot find symbol".
+        int codeCount;            // number of encoded direct+virtual methods with code
+        int firstCodeOff;         // offset of the first code_item in the output dex
+        int debugInfoSize;        // total byte size of this class' debug items
+        int debugInfoRelocStart;  // relocated start offset of debug info items
     }
 
     // ================= API =================

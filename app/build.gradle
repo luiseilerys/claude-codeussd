@@ -29,18 +29,16 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    // Fix "cannot find symbol R / package R does not exist": en AGP 8.x la
-    // unica forma oficial de desactivar la generacion de la clase R es
-    // android.rclass.enabled=false, por lo que se fuerza explicitamente a
-    // true aqui (y en gradle.properties) para garantizar que se generen
-    // R.layout.*, R.id.*, R.string.*, R.color.* y R.drawable.*.
+    // Fix "cannot find symbol R / package R does not exist": la generacion
+    // de la clase R no es una opcion de buildFeatures en AGP 8.x (ahi solo
+    // existen flags como viewBinding, aidl, resValues, etc.; un nombre
+    // invalido como rClassGeneration rompe el build en esta linea). La
+    // clase R.java SIEMPRE la genera AAPT2; se controla unicamente mediante
+    // la propiedad android.rclass.enabled (true) y android.nonTransitiveRClass
+    // (false), ambas declaradas en gradle.properties.
     // Ademas, useLibrary habilita org.apache.http.legacy, que algunas
     // librerias empaquetadas (apktool) referencian; sin el aparecen errores
     // de "missing method/field references in library classes".
-    buildFeatures {
-        rClassGeneration = true
-    }
-
     useLibrary 'org.apache.http.legacy'
 
     // Los JARs de apktool/smali/baksmali se empaquetan como libs para uso in-app

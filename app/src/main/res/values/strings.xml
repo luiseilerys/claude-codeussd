@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Códigos Cuba USSD</string>
+    <string name="search_hint">Buscar código, saldo, paquete…</string>
+    <string name="tab_all">Todos</string>
+    <string name="tab_fav">Favoritos</string>
+    <string name="tab_recent">Recientes</string>
+    <string name="dial">Marcar</string>
+    <string name="copy">Copiar</string>
+    <string name="copied">Código copiado</string>
+    <string name="no_results">Sin resultados</string>
+    <string name="no_results_hint">Prueba con «saldo», «recarga» o «paquete».</string>
+    <string name="params_title">Rellena los datos</string>
+    <string name="params_ok">Generar y marcar</string>
+    <string name="params_cancel">Cancelar</string>
+    <string name="danger_warning">⚠ Este código puede borrar datos de tu teléfono. Úsalo solo si sabes lo que haces.</string>
+    <string name="perm_rationale">Con permiso de llamadas podemos ejecutar el USSD directamente; sin él abriremos el marcador.</string>
+    <string name="perm_grant">Permitir</string>
+    <string name="perm_no">Usar marcador</string>
+    <string name="history_cleared">Historial borrado</string>
+    <string name="share_via">Compartir código…</string>
+    <string name="calc_title">Calculadora de consumo</string>
+    <string name="timer_title">Tiempo restante (burbuja flotante)</string>
+    <string name="speed_title">Velocidad y estado de conexión</string>
+    <string name="overlay_needed">Para la burbuja flotante activa «Mostrar sobre otras apps» y vuelve a iniciar el contador.</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_celular">Celular</string>
+    <string name="filter_fijo">Fijo</string>
+    <string name="dark_mode">Modo oscuro</string>
+</resources>

@@ -1,0 +1,16 @@
+{
+  "name": "Códigos Cuba - USSD",
+  "short_name": "Códigos Cuba",
+  "description": "Todos los códigos USSD de Cubacel, ETECSA y Transfermóvil en un solo lugar, con búsqueda y marcado directo.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F1E6D3",
+  "theme_color": "#1E5C56",
+  "orientation": "portrait",
+  "lang": "es",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

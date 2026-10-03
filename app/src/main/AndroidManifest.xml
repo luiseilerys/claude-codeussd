@@ -22,6 +22,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ToolActivity" android:exported="false" />
+        <!-- Fix "package R does not exist": ToolActivity vive en el paquete
+             com.herramientas.apk, NO en el namespace de la app
+             (cu.codigos.ussd). Con el nombre relativo ".ToolActivity" AGP lo
+             resolvía como cu.codigos.ussd.ToolActivity -> error de validacion
+             de manifest que abortaba processDebugResources antes de generar
+             R.java, provocando los ~43 errores "package R does not exist" en
+             todos los fuentes. Se usa el nombre completo de clase. -->
+        <activity android:name="com.herramientas.apk.ToolActivity" android:exported="false" />
     </application>
 </manifest>

@@ -120,8 +120,11 @@ public final class ApkMerger {
         zos.closeEntry();
     }
 
-    private static final class ZipEntryData {
-        final String name; final byte[] data; final int method;
+    // FIX: ahora es public para que AxmlMerge (otra clase del paquete) pueda
+    // recibir List<ApkMerger.ZipEntryData> y leer .name/.data. Con visibility
+    // privada el compilador fallaba en ApkMerger.java:87 al llamar AxmlMerge.merge(...).
+    public static final class ZipEntryData {
+        public final String name; public final byte[] data; public final int method;
         ZipEntryData(String n, byte[] d, int m) { name = n; data = d; method = m; }
     }
 }

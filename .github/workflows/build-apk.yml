@@ -45,8 +45,19 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # Fix: el action android-actions/setup-android@v3 intentaba instalar el
+      # paquete 'tools' del SDK, que fue descontinuado por Google y ya no
+      # aparece en los repositorios. Eso producía:
+      #   Warning: Failed to find package 'tools'
+      #   Error: ... sdkmanager failed with exit code 1
+      # Se configura el SDK explícitamente (solo cmdline-tools, platform y
+      # build-tools necesarios para AGP 8.1 / compileSdk 34) sin depender de
+      # paquetes obsoletos ni de la red más de lo necesario.
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+          log-accepted-android-sdk-licenses: 'false'
 
       - name: Configurar Gradle wrapper
         run: |
